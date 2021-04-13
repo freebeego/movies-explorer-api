@@ -3,30 +3,25 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 
-/*
 const rateLimit = require('express-rate-limit');
 const slowDown = require('express-slow-down');
 const cors = require('cors');
 const helmet = require('helmet');
-*/
 const { errors } = require('celebrate');
 
 const cookieParser = require('cookie-parser');
 
-/*
 const corsConfig = require('./config/corsConfig');
 const { rateLimitConfig, slowDownConfig } = require('./config/limitConfig');
-*/
+
 const { requestLogger, errorLogger, logger } = require('./middlewares/logger');
 
-const handleResourceNotFound = require('./middlewares/handleResourceNotFound');
-
 const auth = require('./middlewares/auth');
+const handleResourceNotFound = require('./middlewares/handleResourceNotFound');
+const handleError = require('./middlewares/handleError');
 
 const usersRouter = require('./routes/users');
 const moviesRouter = require('./routes/movies');
-
-const handleError = require('./middlewares/handleError');
 
 const { createUserValidator, loginValidator } = require('./middlewares/prevalidation/user');
 
@@ -39,10 +34,8 @@ const {
   DB_NAME = 'bitfilmsdb',
 } = process.env;
 
-/*
 const limiter = rateLimit(rateLimitConfig);
 const speedLimiter = slowDown(slowDownConfig);
-*/
 
 mongoose
   .connect(`mongodb://${DB_HOST}:${DB_PORT}/${DB_NAME}`, {
@@ -54,15 +47,12 @@ mongoose
   .then(() => {
     const app = express();
 
-    /*
     app.use(cors(corsConfig));
-
     app.use(limiter);
     app.use(speedLimiter);
     app.use(helmet());
-    */
-    app.use(express.json());
 
+    app.use(express.json());
     app.use(cookieParser());
 
     app.use(requestLogger);
@@ -76,8 +66,8 @@ mongoose
 
     app.use(handleResourceNotFound);
 
-    app.use(errors());
     app.use(errorLogger);
+    app.use(errors());
 
     app.use(handleError);
 
