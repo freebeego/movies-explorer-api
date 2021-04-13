@@ -13,9 +13,9 @@ const cookieParser = require('cookie-parser');
 
 const corsConfig = require('./config/corsConfig');
 const { rateLimitConfig, slowDownConfig } = require('./config/limitConfig');
-
-const { requestLogger, errorLogger, logger } = require('./middlewares/logger');
 */
+const { requestLogger, errorLogger, logger } = require('./middlewares/logger');
+
 const handleResourceNotFound = require('./middlewares/handleResourceNotFound');
 
 /*
@@ -61,9 +61,9 @@ mongoose
     app.use(helmet());
     app.use(express.json());
     app.use(cookieParser());
+    */
 
     app.use(requestLogger);
-    */
 
     /*
     app.post('/signin', loginValidator, login);
@@ -77,11 +77,13 @@ mongoose
 
     /*
     app.use(errors());
-
+    */
     app.use(errorLogger);
+
+    /*
     app.use(handleError);
     */
 
-    app.listen(PORT, () => {}/*logger.info(`App listening on port ${PORT}`)*/);
+    app.listen(PORT, () => logger.info(`App listening on port ${PORT}`));
   })
-  .catch((e) => {}/*logger.log('error', 'Ошибка: %s', e)*/);
+  .catch((e) => logger.log('error', 'Ошибка: %s', e));
