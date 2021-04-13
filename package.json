@@ -4,7 +4,9 @@
   "description": "Movies explorer API for diploma project",
   "main": "app.js",
   "scripts": {
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "repository": {
     "type": "git",
@@ -19,6 +21,7 @@
   "devDependencies": {
     "@commitlint/cli": "^12.1.1",
     "@commitlint/config-conventional": "^12.1.1",
-    "husky": "^6.0.0"
+    "husky": "^6.0.0",
+    "nodemon": "^2.0.7"
   }
 }
