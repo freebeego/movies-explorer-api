@@ -23,9 +23,10 @@ const auth = require('./middlewares/auth');
 
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
-
+*/
 const handleError = require('./middlewares/handleError');
 
+/*
 const { createUserValidator, loginValidator } = require('./middlewares/prevalidation/user');
 
 const { createUser, login, logout } = require('./controllers/users');
@@ -80,9 +81,7 @@ mongoose
     */
     app.use(errorLogger);
 
-    /*
     app.use(handleError);
-    */
 
     app.listen(PORT, () => logger.info(`App listening on port ${PORT}`));
   })
