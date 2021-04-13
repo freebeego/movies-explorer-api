@@ -1,7 +1,9 @@
 const { NODE_ENV, JWT_SECRET } = process.env;
 
 const bcryptjs = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const jwtAuth = require('jsonwebtoken');
+
+const { jwt, pass } = require('../config/devConfig');
 
 const ConflictError = require('../errors/ConflictError');
 
@@ -31,7 +33,7 @@ const createUser = (req, res, next) => {
   User.findOne({ email })
     .then((user) => {
       if (user) throw new ConflictError('Пользователь с таким email уже существует.');
-      return bcryptjs.hash(password, 10);
+      return bcryptjs.hash(password, pass.salt);
     })
     .then((passHash) => User.create({
       name,
@@ -48,15 +50,15 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
   User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign(
+      const token = jwtAuth.sign(
         { _id: user._id },
-        NODE_ENV === 'prod' ? JWT_SECRET : 'dev-secret',
-        { expiresIn: '3d' },
+        NODE_ENV === 'prod' ? JWT_SECRET : jwt.secretKey,
+        { expiresIn: jwt.expiresIn },
       );
 
       res
         .cookie('jwt', `Bearer ${token}`, {
-          maxAge: 3600000 * 24 * 3,
+          maxAge: jwt.expiresIn,
           httpOnly: true,
         })
         .status(200)

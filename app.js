@@ -21,11 +21,13 @@ const handleError = require('./middlewares/handleError');
 
 const router = require('./routes/index');
 
+const { server, db } = require('./config/devConfig');
+
 const {
-  PORT = 3000,
-  DB_HOST = 'localhost',
-  DB_PORT = 27017,
-  DB_NAME = 'bitfilmsdb',
+  PORT = server.port,
+  DB_HOST = db.host,
+  DB_PORT = db.port,
+  DB_NAME = db.name,
 } = process.env;
 
 const limiter = rateLimit(rateLimitConfig);
