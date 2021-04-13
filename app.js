@@ -16,16 +16,10 @@ const { rateLimitConfig, slowDownConfig } = require('./config/limitConfig');
 
 const { requestLogger, errorLogger, logger } = require('./middlewares/logger');
 
-const auth = require('./middlewares/auth');
 const handleResourceNotFound = require('./middlewares/handleResourceNotFound');
 const handleError = require('./middlewares/handleError');
 
-const usersRouter = require('./routes/users');
-const moviesRouter = require('./routes/movies');
-
-const { createUserValidator, loginValidator } = require('./middlewares/prevalidation/user');
-
-const { createUser, login, logout } = require('./controllers/users');
+const router = require('./routes/index');
 
 const {
   PORT = 3000,
@@ -57,12 +51,7 @@ mongoose
 
     app.use(requestLogger);
 
-    app.post('/signin', loginValidator, login);
-    app.post('/signup', createUserValidator, createUser);
-    app.get('/signout', auth, logout);
-
-    app.use('/users', auth, usersRouter);
-    app.use('/movies', auth, moviesRouter);
+    app.use(router);
 
     app.use(handleResourceNotFound);
 
