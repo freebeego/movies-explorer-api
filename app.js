@@ -9,8 +9,10 @@ const slowDown = require('express-slow-down');
 const cors = require('cors');
 const helmet = require('helmet');
 const { errors } = require('celebrate');
+ */
 const cookieParser = require('cookie-parser');
 
+/*
 const corsConfig = require('./config/corsConfig');
 const { rateLimitConfig, slowDownConfig } = require('./config/limitConfig');
 */
@@ -18,9 +20,9 @@ const { requestLogger, errorLogger, logger } = require('./middlewares/logger');
 
 const handleResourceNotFound = require('./middlewares/handleResourceNotFound');
 
-/*
 const auth = require('./middlewares/auth');
 
+/*
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 */
@@ -61,8 +63,8 @@ mongoose
     app.use(speedLimiter);
     app.use(helmet());
     app.use(express.json());
-    app.use(cookieParser());
     */
+    app.use(cookieParser());
 
     app.use(requestLogger);
 
