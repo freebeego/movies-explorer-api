@@ -1,7 +1,9 @@
 const { celebrate, Joi } = require('celebrate');
 const validator = require('validator');
 
-const urlValidator = (url, helpers) => (validator.isURL(url) ? url : helpers.message('Given isn\'t correct URL.'));
+const { incorrectUrl } = require('../../config/messages').validation;
+
+const urlValidator = (url, helpers) => (validator.isURL(url) ? url : helpers.message(incorrectUrl));
 
 const createMovieValidator = celebrate({
   body: Joi.object().keys({

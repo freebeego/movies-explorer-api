@@ -3,6 +3,8 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 const bcryptjs = require('bcryptjs');
 const jwtAuth = require('jsonwebtoken');
 
+const { userAlreadyExists } = require('../config/messages').http.clientError.conflictError;
+
 const { jwt, pass } = require('../config/devConfig');
 
 const ConflictError = require('../errors/ConflictError');
@@ -32,7 +34,7 @@ const createUser = (req, res, next) => {
   const { name, email, password } = req.body;
   User.findOne({ email })
     .then((user) => {
-      if (user) throw new ConflictError('Пользователь с таким email уже существует.');
+      if (user) throw new ConflictError(userAlreadyExists);
       return bcryptjs.hash(password, pass.salt);
     })
     .then((passHash) => User.create({

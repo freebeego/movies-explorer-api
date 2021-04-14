@@ -3,6 +3,8 @@ const Movie = require('../models/movie');
 const ForbiddenError = require('../errors/ForbiddenError');
 const NotFoundError = require('../errors/NotFoundError');
 
+const { notFoundError, forbiddenError } = require('../config/messages').http.clientError;
+
 const getMyMovies = (req, res, next) => {
   const id = req.user._id;
   Movie.find({ owner: id })
@@ -48,10 +50,10 @@ const createMovie = (req, res, next) => {
 const deleteMovie = (req, res, next) => {
   const { id } = req.params;
   Movie.findById(id)
-    .orFail(new NotFoundError('Фильм с указанным id не существует.'))
+    .orFail(new NotFoundError(notFoundError.movieNotExist))
     .then((movie) => {
       if (movie.owner.toString() !== req.user._id) {
-        throw new ForbiddenError('Удалять можно только свои фильмы.');
+        throw new ForbiddenError(forbiddenError.justOwnerCanDeleteMovie);
       }
       return Movie.findByIdAndRemove(id);
     })

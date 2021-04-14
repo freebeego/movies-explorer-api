@@ -1,7 +1,11 @@
 const { celebrate, Joi } = require('celebrate');
 const validator = require('validator');
 
-const emailValidator = (email, helpers) => (validator.isEmail(email) ? email : helpers.message('Given isn\'t correct email.'));
+const { incorrectEmail } = require('../../config/messages').validation;
+
+const emailValidator = (email, helpers) => (
+  validator.isEmail(email) ? email : helpers.message(incorrectEmail)
+);
 
 const createUserValidator = celebrate({
   body: Joi.object().keys({

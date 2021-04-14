@@ -1,8 +1,10 @@
+const { errorMessage } = require('./messages').rateLimit;
+
 module.exports = {
   rateLimitConfig: {
     windowMs: 60 * 1000,
     max: 300,
-    message: { message: 'Too many requests, please try again later.' },
+    message: { message: errorMessage },
   },
   slowDownConfig: {
     windowMs: 10 * 1000,
