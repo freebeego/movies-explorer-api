@@ -1,4 +1,9 @@
-const { NODE_ENV, JWT_SECRET } = process.env;
+const {
+  NODE_ENV,
+  JWT_SECRET,
+  JWT_EXPIRES,
+  PASS_SALT,
+} = process.env;
 
 const bcryptjs = require('bcryptjs');
 const jwtAuth = require('jsonwebtoken');
@@ -35,7 +40,7 @@ const createUser = (req, res, next) => {
   User.findOne({ email })
     .then((user) => {
       if (user) throw new ConflictError(userAlreadyExists);
-      return bcryptjs.hash(password, pass.salt);
+      return bcryptjs.hash(password, NODE_ENV === 'prod' ? PASS_SALT : pass.salt);
     })
     .then((passHash) => User.create({
       name,
@@ -55,12 +60,12 @@ const login = (req, res, next) => {
       const token = jwtAuth.sign(
         { _id: user._id },
         NODE_ENV === 'prod' ? JWT_SECRET : jwt.secretKey,
-        { expiresIn: jwt.expiresIn },
+        { expiresIn: NODE_ENV === 'prod' ? JWT_EXPIRES : jwt.expiresIn },
       );
 
       res
         .cookie('jwt', `Bearer ${token}`, {
-          maxAge: jwt.expiresIn,
+          maxAge: NODE_ENV === 'prod' ? JWT_EXPIRES : jwt.expiresIn,
           httpOnly: true,
         })
         .status(200)
