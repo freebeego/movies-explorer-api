@@ -5,9 +5,9 @@
 при обращении по протаколу http осуществляется 301 редирект на https
 
 
-##Краткое описание API сервиса.
+## Краткое описание API сервиса.
 
-###Data API:
+### Data API:
 
 `GET /users/me`
 
@@ -30,7 +30,7 @@ _country, director, duration, year, description, image, trailer, movieId, nameRU
 
 Удаляет сохранённый фильм по _id.
 
-###Auth API:
+### Auth API:
 
 `POST /signup`
 
