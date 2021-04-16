@@ -43,9 +43,10 @@ mongoose
   .then(() => {
     const app = express();
 
+    app.use(requestLogger);
     app.use(cors(corsConfig), limiter, speedLimiter, helmet());
     app.use(express.json(), cookieParser());
-    app.use(requestLogger, router, handleResourceNotFound);
+    app.use(router, handleResourceNotFound);
     app.use(errorLogger, errors(), handleError);
 
     app.listen(PORT, () => logger.info(`App listening on port ${PORT}`));

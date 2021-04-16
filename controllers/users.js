@@ -40,7 +40,7 @@ const createUser = (req, res, next) => {
   User.findOne({ email })
     .then((user) => {
       if (user) throw new ConflictError(userAlreadyExists);
-      return bcryptjs.hash(password, NODE_ENV === 'prod' ? Number(PASS_SALT) : pass.salt);
+      return bcryptjs.hash(password, NODE_ENV === 'production' ? Number(PASS_SALT) : pass.salt);
     })
     .then((passHash) => User.create({
       name,
@@ -59,13 +59,13 @@ const login = (req, res, next) => {
     .then((user) => {
       const token = jwtAuth.sign(
         { _id: user._id },
-        NODE_ENV === 'prod' ? JWT_SECRET : jwt.secretKey,
-        { expiresIn: NODE_ENV === 'prod' ? Number(JWT_EXPIRES) : jwt.expiresIn },
+        NODE_ENV === 'production' ? JWT_SECRET : jwt.secretKey,
+        { expiresIn: NODE_ENV === 'production' ? (Number(JWT_EXPIRES) / 1000) : jwt.expiresIn },
       );
 
       res
         .cookie('jwt', `Bearer ${token}`, {
-          maxAge: NODE_ENV === 'prod' ? Number(JWT_EXPIRES) : jwt.expiresIn,
+          maxAge: NODE_ENV === 'production' ? Number(JWT_EXPIRES) : jwt.expiresIn,
           httpOnly: true,
         })
         .status(200)

@@ -43,6 +43,19 @@ const createMovie = (req, res, next) => {
     nameEN,
     owner,
   })
+    .then((movie) => ({
+      country: movie.country,
+      director: movie.director,
+      duration: movie.duration,
+      year: movie.year,
+      description: movie.description,
+      image: movie.image,
+      trailer: movie.trailer,
+      thumbnail: movie.thumbnail,
+      movieId: movie.movieId,
+      nameRU: movie.nameRU,
+      nameEN: movie.nameEN,
+    }))
     .then((movie) => res.status(200).send(movie))
     .catch(next);
 };
@@ -55,7 +68,7 @@ const deleteMovie = (req, res, next) => {
       if (movie.owner.toString() !== req.user._id) {
         throw new ForbiddenError(forbiddenError.justOwnerCanDeleteMovie);
       }
-      return Movie.findByIdAndRemove(id);
+      return Movie.findByIdAndRemove(id, { projection: '-owner' });
     })
     .then((deletedMovie) => res.status(200).send(deletedMovie))
     .catch(next);

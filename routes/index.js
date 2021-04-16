@@ -9,7 +9,7 @@ const { createUser, login, logout } = require('../controllers/users');
 
 router.post('/signin', loginValidator, login);
 router.post('/signup', createUserValidator, createUser);
-router.get('/signout', auth, logout);
+router.post('/signout', auth, logout);
 
 router.use('/users', auth, usersRouter);
 router.use('/movies', auth, moviesRouter);

@@ -15,16 +15,16 @@ const createMovieValidator = celebrate({
     image: Joi.string().required().custom(urlValidator, 'URL validation.'),
     trailer: Joi.string().required().custom(urlValidator, 'URL validation.'),
     thumbnail: Joi.string().required().custom(urlValidator, 'URL validation.'),
-    movieId: Joi.string().required().hex().length(24),
+    movieId: Joi.number().required(),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
   }),
 });
 
-const movieValidator = celebrate({
+const movieIdValidator = celebrate({
   params: Joi.object().keys({
     id: Joi.string().hex().length(24),
   }),
 });
 
-module.exports = { createMovieValidator, movieValidator };
+module.exports = { createMovieValidator, movieIdValidator };

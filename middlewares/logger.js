@@ -9,7 +9,7 @@ const requestLogger = expressWinston.logger({
 });
 
 const expressErrorTransports = [new winston.transports.File({ filename: './logs/error.log' })];
-if (process.env.NODE_ENV !== 'prod') {
+if (process.env.NODE_ENV !== 'production') {
   expressErrorTransports.push(
     new winston.transports.Console({
       level: 'info',
@@ -42,7 +42,7 @@ const logger = winston.createLogger({
   ],
 });
 
-if (process.env.NODE_ENV !== 'prod') {
+if (process.env.NODE_ENV !== 'production') {
   logger.add(
     new winston.transports.Console({
       level: 'info',
