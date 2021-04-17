@@ -1,0 +1,14 @@
+Example of production config
+NODE_ENV=production
+# secret for jwt encryption
+JWT_SECRET=someSecret
+# expressed in milliseconds. In example below equals 3 days
+JWT_EXPIRES=259200000
+# Salt length to generate
+PASS_SALT=10
+# Server port
+PORT=3000
+# mongoDB settings
+DB_NAME=moviesdb
+DB_HOST=localhost
+DB_PORT=27017

@@ -1,0 +1,90 @@
+const {
+  NODE_ENV,
+  JWT_SECRET,
+  JWT_EXPIRES,
+  PASS_SALT,
+} = process.env;
+
+const bcryptjs = require('bcryptjs');
+const jwtAuth = require('jsonwebtoken');
+
+const { userAlreadyExists } = require('../config/messages').http.clientError.conflictError;
+
+const { jwt, pass } = require('../config/devConfig');
+
+const ConflictError = require('../errors/ConflictError');
+
+const User = require('../models/user');
+
+const getMe = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => res.status(200).send(user))
+    .catch(next);
+};
+
+const updateProfile = (req, res, next) => {
+  User.findByIdAndUpdate(
+    req.user._id,
+    req.body,
+    {
+      new: true,
+      runValidators: true,
+    },
+  )
+    .then((user) => res.status(200).send(user))
+    .catch(next);
+};
+
+const createUser = (req, res, next) => {
+  const { name, email, password } = req.body;
+  User.findOne({ email })
+    .then((user) => {
+      if (user) throw new ConflictError(userAlreadyExists);
+      return bcryptjs.hash(password, NODE_ENV === 'production' ? Number(PASS_SALT) : pass.salt);
+    })
+    .then((passHash) => User.create({
+      name,
+      email,
+      password: passHash,
+    }))
+    .then((user) => {
+      res.status(200).send({ _id: user._id, name: user.name, email: user.email });
+    })
+    .catch(next);
+};
+
+const login = (req, res, next) => {
+  const { email, password } = req.body;
+  User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwtAuth.sign(
+        { _id: user._id },
+        NODE_ENV === 'production' ? JWT_SECRET : jwt.secretKey,
+        { expiresIn: NODE_ENV === 'production' ? (Number(JWT_EXPIRES) / 1000) : jwt.expiresIn },
+      );
+
+      res
+        .cookie('jwt', `Bearer ${token}`, {
+          maxAge: NODE_ENV === 'production' ? Number(JWT_EXPIRES) : jwt.expiresIn,
+          httpOnly: true,
+        })
+        .status(200)
+        .send({ _id: user._id, name: user.name, email: user.email });
+    })
+    .catch(next);
+};
+
+const logout = (req, res) => {
+  res
+    .clearCookie('jwt', { path: '/' })
+    .status(200)
+    .send({});
+};
+
+module.exports = {
+  getMe,
+  updateProfile,
+  createUser,
+  login,
+  logout,
+};
