@@ -28,7 +28,7 @@ const createMovie = (req, res, next) => {
     nameEN,
   } = req.body;
 
-  const owner = req.user._id;
+  const ownerId = req.user._id;
 
   Movie.create({
     country,
@@ -42,22 +42,10 @@ const createMovie = (req, res, next) => {
     movieId,
     nameRU,
     nameEN,
-    owner,
+    owner: ownerId,
   })
-    .then((movie) => ({
-      country: movie.country,
-      director: movie.director,
-      duration: movie.duration,
-      year: movie.year,
-      description: movie.description,
-      image: movie.image,
-      trailer: movie.trailer,
-      thumbnail: movie.thumbnail,
-      movieId: movie.movieId,
-      nameRU: movie.nameRU,
-      nameEN: movie.nameEN,
-    }))
-    .then((movie) => res.status(200).send(movie))
+    .then((movie) => movie.toJSON())
+    .then(({ owner, ...movie }) => res.status(200).send(movie))
     .catch(next);
 };
 
