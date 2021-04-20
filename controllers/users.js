@@ -23,14 +23,18 @@ const getMe = (req, res, next) => {
 };
 
 const updateProfile = (req, res, next) => {
-  User.findByIdAndUpdate(
-    req.user._id,
-    req.body,
-    {
-      new: true,
-      runValidators: true,
-    },
-  )
+  User.findOne({ email: req.body.email })
+    .then((user) => {
+      if (user) throw new ConflictError(userAlreadyExists);
+      return User.findByIdAndUpdate(
+        req.user._id,
+        req.body,
+        {
+          new: true,
+          runValidators: true,
+        },
+      );
+    })
     .then((user) => res.status(200).send(user))
     .catch(next);
 };
