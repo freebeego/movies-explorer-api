@@ -34,7 +34,14 @@ const setJWTCookie = (res, token) => (
 
 const getMe = (req, res, next) => {
   User.findById(req.user._id)
-    .then((user) => res.status(200).send(user))
+    .then((user) => {
+      res
+        .status(200)
+        .send({
+          name: user.name,
+          email: user.email,
+        });
+    })
     .catch(next);
 };
 
@@ -51,7 +58,14 @@ const updateProfile = (req, res, next) => {
         },
       );
     })
-    .then((user) => res.status(200).send(user))
+    .then((user) => {
+      res
+        .status(200)
+        .send({
+          name: user.name,
+          email: user.email,
+        });
+    })
     .catch(next);
 };
 
@@ -70,7 +84,10 @@ const createUser = (req, res, next) => {
     .then((user) => {
       setJWTCookie(res, makeJWT(user))
         .status(200)
-        .send({ _id: user._id, name: user.name, email: user.email });
+        .send({
+          name: user.name,
+          email: user.email,
+        });
     })
     .catch(next);
 };
@@ -81,7 +98,10 @@ const login = (req, res, next) => {
     .then((user) => {
       setJWTCookie(res, makeJWT(user))
         .status(200)
-        .send({ _id: user._id, name: user.name, email: user.email });
+        .send({
+          name: user.name,
+          email: user.email,
+        });
     })
     .catch(next);
 };
