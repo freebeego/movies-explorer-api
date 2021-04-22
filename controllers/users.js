@@ -16,6 +16,22 @@ const ConflictError = require('../errors/ConflictError');
 
 const User = require('../models/user');
 
+const makeJWT = (user) => (
+  jwtAuth.sign(
+    { _id: user._id },
+    NODE_ENV === 'production' ? JWT_SECRET : jwt.secretKey,
+    { expiresIn: NODE_ENV === 'production' ? (Number(JWT_EXPIRES) / 1000) : jwt.expiresIn },
+  )
+);
+
+const setJWTCookie = (res, token) => (
+  res
+    .cookie('jwt', `Bearer ${token}`, {
+      maxAge: NODE_ENV === 'production' ? Number(JWT_EXPIRES) : jwt.expiresIn,
+      httpOnly: true,
+    })
+);
+
 const getMe = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => res.status(200).send(user))
@@ -52,7 +68,9 @@ const createUser = (req, res, next) => {
       password: passHash,
     }))
     .then((user) => {
-      res.status(200).send({ _id: user._id, name: user.name, email: user.email });
+      setJWTCookie(res, makeJWT(user))
+        .status(200)
+        .send({ _id: user._id, name: user.name, email: user.email });
     })
     .catch(next);
 };
@@ -61,17 +79,7 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
   User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwtAuth.sign(
-        { _id: user._id },
-        NODE_ENV === 'production' ? JWT_SECRET : jwt.secretKey,
-        { expiresIn: NODE_ENV === 'production' ? (Number(JWT_EXPIRES) / 1000) : jwt.expiresIn },
-      );
-
-      res
-        .cookie('jwt', `Bearer ${token}`, {
-          maxAge: NODE_ENV === 'production' ? Number(JWT_EXPIRES) : jwt.expiresIn,
-          httpOnly: true,
-        })
+      setJWTCookie(res, makeJWT(user))
         .status(200)
         .send({ _id: user._id, name: user.name, email: user.email });
     })
